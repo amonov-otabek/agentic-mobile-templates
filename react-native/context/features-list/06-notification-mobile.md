@@ -62,7 +62,7 @@ Base `/api/v1/notifications`, envelope `{ success, data, meta? }`.
 - `features/notification/components/{notification-list,preferences-form,push-toggle}`,
   `features/notification/pages/notifications-page`, `features/notification/services/push.service`.
 - Shared `Card`, `Text`, `Button`, `Checkbox`, a Switch primitive (add if missing), a
-  badge/status element, an empty/loading state; `shared/hooks/use-toast`; `Icons`;
+  badge/status element, an empty/loading state; `shared/hooks/useToast`; `Icons`;
   `(protected)` tab group.
 
 ## Acceptance criteria

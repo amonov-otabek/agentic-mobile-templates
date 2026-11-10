@@ -55,7 +55,7 @@ Base `/api/v1`, envelope `{ success, data, meta? }`.
 - `features/payment/components/{payment-list,payment-create-form,invoice-list}`,
   `features/payment/pages/payments-page`.
 - Shared `Card`, `Input`, `Field`, `Label`, `Button`, `Text`, a badge/status element, a
-  confirm modal, an empty/loading state; `shared/hooks/use-toast`; `Icons`; `(protected)`
+  confirm modal, an empty/loading state; `shared/hooks/useToast`; `Icons`; `(protected)`
   tab group.
 
 ## Acceptance criteria

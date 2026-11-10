@@ -100,7 +100,7 @@ Base `/api/v1`, envelope `{ success, data, meta? }`. Branch on `error.code` / `e
 - To build: `settings-form`/`password-form`/`two-factor-card`/`sessions-list`,
   `users-list`/`roles-picker` under `features/identity/components/*`.
 - Shared primitives: `Button`, `Input`, `Field`, `Label`, `Card`, `Text`, `Checkbox`,
-  `Toaster`; `shared/hooks/use-toast`; `Icons`; `(auth)` / `(protected)` route groups.
+  `Toaster`; `shared/hooks/useToast`; `Icons`; `(auth)` / `(protected)` route groups.
 
 ## Acceptance criteria
 

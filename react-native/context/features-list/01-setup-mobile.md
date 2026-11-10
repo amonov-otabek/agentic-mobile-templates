@@ -59,12 +59,12 @@ through i18next (en/ru/uz).
   redirects unauthenticated users to `/sign-in`; `(auth)/_layout` redirects authed users to
   `/dashboard`. Guards are UX-only — the backend remains the authz source of truth (a `401`
   clears the session).
-- **Providers** (`src/shared/components/provider/providers.tsx`) — compose once in order
+- **Providers** (`src/shared/components/provider/Providers.tsx`) — compose once in order
   i18n → TanStack Query → AuthProvider (awaits `loadSession()` before first paint) → toaster;
   mounted in `app/_layout.tsx`.
 - **Shared UI kit** (`src/shared/components/ui/*`) — `Button`, `Text`, `Input`, `Field`,
   `Label`, `Card`, `Checkbox`, `Toaster` primitives (cva variants, tokens-only); widgets
-  `Icons` (lucide map) + `LocaleSwitch`; `shared/hooks/use-toast`; `shared/libs/{store,utils,validators}`.
+  `Icons` (lucide map) + `LocaleSwitch`; `shared/hooks/useToast`; `shared/libs/{store,utils,validators}`.
 - Out of scope: any auth/business logic, feature data wiring, public marketing site beyond a
   single placeholder `home`, tests (FEAT-08).
 
@@ -78,7 +78,7 @@ through i18next (en/ru/uz).
 
 - Route shells (`src/app/**`, `src/layout/{auth-layout,coming-soon}`),
   `shared/components/provider/*`, `shared/components/ui/*` primitives,
-  `shared/components/widgets/{icons,locale-switch}`, `shared/hooks/use-toast`, tokens in
+  `shared/components/widgets/{Icons,LocaleSwitch}`, `shared/hooks/useToast`, tokens in
   `src/global.css`.
 
 ## Acceptance criteria

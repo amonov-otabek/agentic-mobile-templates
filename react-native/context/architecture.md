@@ -66,7 +66,7 @@ src/
     │   ├── ui/                ← primitives: button, input, field, label, card, text, checkbox, toaster
     │   ├── provider/          ← Providers, query-provider, i18n-provider
     │   └── widgets/           ← icons (lucide map), locale-switch
-    ├── hooks/                 ← cross-feature hooks (use-toast)
+    ├── hooks/                 ← cross-feature hooks (useToast)
     ├── i18n/                  ← index, detector, routing, messages/{en,ru,uz}.json
     └── libs/                  ← api (typed client), storage (secure), store (zustand), utils (cn), validators
 
@@ -112,9 +112,9 @@ test/
 Source → spec mapping:
 
 ```
-src/app/_layout.tsx                              → test/main.spec.tsx (root providers)
-src/features/auth/validators/sign-in.ts          → test/features/auth/validators/sign-in.spec.ts
-src/shared/libs/storage.ts                       → test/shared/libs/storage.spec.ts
+src/app/_layout.tsx                               → test/main.spec.tsx (root providers)
+src/features/auth/validators/signIn.ts            → test/features/auth/validators/signIn.spec.ts
+src/shared/libs/storage.ts                        → test/shared/libs/storage.spec.ts
 ```
 
 1. **One location only.** Every test file lives under `test/` at the project root — never next to a source file, never inside a module/feature folder, never in a second test folder.

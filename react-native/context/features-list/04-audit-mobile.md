@@ -51,7 +51,7 @@ Base `/api/v1/audit`, envelope `{ success, data, meta? }`.
 - `features/audit/components/{audit-log-list,alert-list}`,
   `features/audit/pages/audit-page`.
 - Shared `Card`, `Text`, `Button`, a badge/status element, an empty/loading state;
-  `shared/hooks/use-toast`; `Icons`; `(protected)` tab group.
+  `shared/hooks/useToast`; `Icons`; `(protected)` tab group.
 
 ## Acceptance criteria
 

@@ -54,7 +54,7 @@ Base `/api/v1/messages`, envelope `{ success, data, meta? }`.
   `features/message/pages/messages-page`.
 - Shared `Card`, `Input`, `Field`, `Label`, `Button`, `Text`, a textarea (multiline `Input`),
   a select/picker for channel, a badge/status element, an empty/loading state;
-  `shared/hooks/use-toast`; `Icons`; `(protected)` tab group.
+  `shared/hooks/useToast`; `Icons`; `(protected)` tab group.
 
 ## Acceptance criteria
 

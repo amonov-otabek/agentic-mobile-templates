@@ -16,6 +16,7 @@ work and `context/api-context.md` for the consumed backend. Treat as locked.
 
 ## TypeScript
 
+- **File names (HARD):** PascalCase for pages, components, layouts and providers; camelCase for hooks (`useX.ts`) and every other module; lowercase/kebab-case folders; generated and framework-reserved files keep their names — full table in `context/ui-rules.md` → File naming.
 - Strict mode (`strict: true`, via `expo/tsconfig.base`). No `any` — use precise types
   or `unknown` + narrowing. No `as` to silence errors.
 - Use the path aliases (`@/*`, `@/assets/*`) — not deep relative `../../..` chains.
@@ -61,7 +62,7 @@ work and `context/api-context.md` for the consumed backend. Treat as locked.
 
 - All HTTP goes through `shared/libs/api.ts`; a failed envelope throws `ApiError`
   (`status`, `code`, `fields`). Surface `error.fields` back into form field errors and
-  show a toast (`shared/hooks/use-toast`) for the general message.
+  show a toast (`shared/hooks/useToast`) for the general message.
 - Every async surface handles **loading / empty / error / success** explicitly — no
   silent spinners that never resolve. Disable controls while their action is pending
   (`Button` `loading` prop).

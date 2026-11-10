@@ -73,7 +73,7 @@ arbitrary hex.
 ## Typography scale
 
 Font: system default (RN platform font) via the `Text` primitive
-(`shared/components/ui/text.tsx`, base `text-base text-foreground`). Sizes/weights are
+(`shared/components/ui/Text.tsx`, base `text-base text-foreground`). Sizes/weights are
 Tailwind classes:
 
 | Style | Class | Use |
@@ -99,7 +99,7 @@ component; audited by QA and `/review`. One entry per component:
 
 ```markdown
 ### ComponentName
-- Path: `src/shared/components/<area>/name.tsx` or `src/features/<feature>/components/name.tsx`
+- Path: `src/shared/components/<area>/<Name>.tsx` or `src/features/<feature>/components/<Name>.tsx`
 - Purpose: one line
 - Variants/props: the public API surface
 - Used by: screens/features using it
@@ -115,7 +115,7 @@ Existing shared primitives (reuse these — do not re-implement):
 - Used by: all forms (sign-in, sign-up, etc.).
 
 ### Text
-- Path: `src/shared/components/ui/text.tsx`
+- Path: `src/shared/components/ui/Text.tsx`
 - Purpose: typography primitive applying theme foreground + className.
 - Variants/props: all `TextProps` + `className`.
 
@@ -144,15 +144,15 @@ Existing shared primitives (reuse these — do not re-implement):
 - Variants/props: `checked`, `onCheckedChange`, `className?`.
 
 ### Toaster
-- Path: `src/shared/components/ui/toaster.tsx`
-- Purpose: app-root toast host (driven by `shared/hooks/use-toast`); tap to dismiss.
+- Path: `src/shared/components/ui/Toaster.tsx`
+- Purpose: app-root toast host (driven by `shared/hooks/useToast`); tap to dismiss.
 
 ### Icons
-- Path: `src/shared/components/widgets/icons.tsx`
+- Path: `src/shared/components/widgets/Icons.tsx`
 - Purpose: central `lucide-react-native` icon map; callers pass `color`/`size`.
 
 ### LocaleSwitch
-- Path: `src/shared/components/widgets/locale-switch.tsx`
+- Path: `src/shared/components/widgets/LocaleSwitch.tsx`
 - Purpose: language switcher (en / ru / uz).
 
 _(feature components — sign-in-form, sign-up-form, etc. — registered by their feature)_
