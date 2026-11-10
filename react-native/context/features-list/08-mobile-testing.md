@@ -26,6 +26,10 @@ component/unit tests (mocked API client and mocked query hooks), plus a Maestro 
 e2e flow for the critical auth path — wired to pnpm scripts and recorded in
 `context/architecture.md`.
 
+## Test layout (HARD)
+
+All tests in this feature follow `context/architecture.md` → **Test structure**: `test/` — `main.spec.ts(x)`, `app.spec.ts(x)`, `setup.ts`, `helpers.ts(x)`, folders mirroring `src/` (`*.spec.ts(x)`), `e2e/` (`*.e2e-spec.ts`, own `helpers.ts` allowed). Any path elsewhere in this spec that sits outside that layout (`src/**/tests/`, `src/test/`, a root `tests/` or `e2e/`, `*.test.*`, `conftest.py`) describes the current/legacy suite — it is migrated by this feature, never extended.
+
 ## Scope
 
 ### Unit / component harness (to add)
@@ -34,10 +38,10 @@ e2e flow for the critical auth path — wired to pnpm scripts and recorded in
   `@testing-library/jest-native` (matchers), and `react-test-renderer` pinned to the React
   version. Add `jest.config.js` (preset `jest-expo`, `transformIgnorePatterns` for RN/Expo
   packages) and `test`, `test:watch`, `test:coverage` scripts.
-- `src/test/setup.ts` (or `jest.setup`) — register jest-native matchers, mock
+- `test/setup.ts` — register jest-native matchers, mock
   `expo-secure-store`, `expo-localization`, and `expo-router` navigation, and reset the
   in-memory token + auth store between tests.
-- `src/test/render.tsx` — a `renderWithProviders` helper mounting components with i18n +
+- `test/helpers.tsx` — a `renderWithProviders` helper mounting components with i18n +
   React Query (fresh client, retries off).
 
 ### What to test
@@ -77,15 +81,16 @@ e2e flow for the critical auth path — wired to pnpm scripts and recorded in
 
 ## UI / components used
 
-- Test utilities under `src/test/*` (`renderWithProviders` wrapping i18n + Query); Maestro
-  flows under `.maestro/` (or Detox `e2e/`); existing feature components and screens as units
+- Test utilities in `test/setup.ts` + `test/helpers.tsx` (`renderWithProviders` wrapping i18n + Query); Maestro
+  flows under `test/e2e/` (`<flow>.e2e.yaml`, or Detox `<flow>.e2e-spec.ts`); existing feature components and screens as units
   under test.
 
 ## Acceptance criteria
 
+- [ ] Test layout matches `context/architecture.md` → Test structure: every existing test is moved to its mirrored path and renamed to the stack suffix; nothing test-related remains under the source root; runner config (globs, setup file, e2e dir, coverage root) points at the test folder; the collected-test count is not lower after the move.
 - [ ] `jest-expo` + RNTL + jest-native installed; `jest.config.js` + `test`/`test:watch`/
       `test:coverage` scripts added; the test command recorded in `context/architecture.md`.
-- [ ] `src/test/setup.ts` mocks `expo-secure-store` / `expo-localization` / `expo-router` and
+- [ ] `test/setup.ts` mocks `expo-secure-store` / `expo-localization` / `expo-router` and
       resets token + auth store between tests; `renderWithProviders` mounts i18n + Query.
 - [ ] `shared/libs/api.ts` and `shared/libs/storage.ts` are unit-tested (envelope/`ApiError`/
       `204`/`meta`/bearer; secure-store + web fallback).

@@ -93,34 +93,39 @@ require developer approval first.
 
 ## Test structure (HARD)
 
-Applies to every project built from this template. QA rejects a task whose test files break any rule below.
-
-```
-lib/core/network/api_client.dart                       → test/core/network/api_client_test.dart
-lib/features/auth/data/repositories/auth_repository_impl.dart
-  → test/features/auth/data/repositories/auth_repository_impl_test.dart
-lib/features/auth/presentation/screens/sign_in_screen.dart
-  → test/features/auth/presentation/screens/sign_in_screen_test.dart
-```
+Every project built from this template uses this exact test layout. QA rejects a task whose test files break any rule below.
 
 ```
 test/
-├── helpers/                   ← pump_app.dart, mocks.dart, fixtures.dart (no _test suffix)
-├── app_test.dart              ← root widget: theme, router, localization wiring
-├── core/                      ← mirrors lib/core: network/, router/, storage/, error/, …
+├── main_test.dart             ← bootstrap: main() + ProviderScope
+├── app_test.dart              ← root widget: theme, router, localization
+├── flutter_test_config.dart   ← setup: self-contained env (auto-loaded)
+├── helpers.dart               ← pumpApp, mocktail mocks, fixtures
+├── core/                      ← mirrors lib/core: network/, router/, storage/, …
 ├── features/<name>/           ← mirrors the feature: data/, domain/, presentation/
 └── shared/                    ← mirrors lib/shared
 integration_test/              ← <flow>_test.dart (end-to-end only)
 ```
 
-1. **One location only.** Every test file lives under `test/` — never next to a source file, never inside a module/feature folder, never in a second test folder.
-2. **Mirror the source tree.** `test/` mirrors `lib/` one-to-one. Same folder names, same file names, plus the `_test.dart` suffix — `flutter test` only discovers `*_test.dart` (`*_spec.dart` is not used).
-3. **One spec per source file**, at its mirrored path. Moving or renaming a source file moves or renames its spec in the same task.
-4. **No catch-all spec.** Logic shared across the app is tested at the mirrored path of the file that owns it — never in a "global" / "misc" / "utils" spec file.
-5. **Shared test code** lives in `test/helpers/` (`pump_app.dart` with ProviderScope overrides, mocktail mocks, fixtures). Files there have no `_test.dart` suffix. Specs never import from other specs.
-6. **End-to-end tests** live only in `integration_test/` (the folder Flutter requires), named `<flow>_test.dart` and mirroring the feature name. Unit/integration specs never go there, and e2e specs never go anywhere else.
-7. **Runner config follows the folder.** `flutter test` runs `test/`; `flutter test integration_test` runs e2e; coverage (`--coverage`) measures `lib/`. Generated files (`*.g.dart`, `*.freezed.dart`) get no spec.
-8. **Legacy layout is drift, not precedent.** If existing code or a feature spec places tests elsewhere (e.g. a module's own `tests/` folder), new and modified tests still go to the mirrored path; moving the old ones is its own task — surface the drift to the developer, never silently mass-move files.
+Source → spec mapping:
+
+```
+lib/main.dart                                          → test/main_test.dart
+lib/core/network/api_client.dart                       → test/core/network/api_client_test.dart
+lib/features/auth/data/repositories/auth_repository_impl.dart
+  → test/features/auth/data/repositories/auth_repository_impl_test.dart
+```
+
+1. **One location only.** Every test file lives under `test/` at the project root (end-to-end: `integration_test/`, which Flutter requires) — never next to a source file, never inside a module/feature folder, never in a second test folder.
+2. **Fixed root files — nothing else at the root.** `main_test.dart` covers bootstrap only: `main()` wiring and `ProviderScope` overrides. `app_test.dart` covers the root widget only: theme, router, localization wiring. `flutter_test_config.dart` is the setup file (Flutter auto-loads this exact name): fake `--dart-define` env, secure-storage and HTTP mocks, golden config — no device config needed. `helpers.dart` holds `pumpApp()`, mocktail mocks and fixtures — no assertions. Besides these four, the root holds only mirrored folders and `e2e/`.
+3. **Mirror the source tree.** Every other spec sits at the path of the file it tests: same folder names, same file name, plus the `_test.dart` suffix — `flutter test` only discovers `*_test.dart`, and this cannot be configured, so Dart is the one stack without `spec` in the name.
+4. **One spec per source file.** Moving or renaming a source file moves or renames its spec in the same task.
+5. **No catch-all spec.** Logic shared across the app is tested at the mirrored path of the file that owns it — never in a "global" / "misc" / "utils" spec.
+6. **Specs import only source code and the helpers file** — never another spec, never a fixture defined inside another spec.
+7. **End-to-end tests** live only in `integration_test/`, named `<flow>_test.dart`. Unit/integration specs never go there; the e2e folder may hold one `helpers` file of its own (route/bridge mocks, launch fixtures).
+8. **Runner config follows the folder.** `flutter test` runs `test/`; `flutter test integration_test` runs e2e; coverage (`--coverage`) measures `lib/`. Generated files (`*.g.dart`, `*.freezed.dart`) get no spec. If the config disagrees with this section, fix the config in the same task.
+9. **Same tree in every template.** The root file names (`main`, `app`, `setup`, `helpers`, `e2e/`) are identical across all stacks, so a developer moving between a TS and a Python API finds the same layout. A change to this rule is applied to every template at once.
+10. **Legacy layout is drift, not precedent.** If existing code or a feature spec places tests elsewhere (e.g. a module's own `tests/` folder or `*.test.ts` files), new and modified tests still follow this section; moving the old ones is its own task — surface the drift to the developer, never silently mass-move files.
 
 ## Boundary rules (HARD)
 

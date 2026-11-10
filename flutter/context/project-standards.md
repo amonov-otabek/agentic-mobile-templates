@@ -92,6 +92,10 @@ app (foundation for an empty project). Treat as locked.
 
 ## Testing
 
+- **Where tests live (HARD):** every test file goes in `test/` (`main_test.dart`, `app_test.dart`, `flutter_test_config.dart`, `helpers.dart`) + `integration_test/`, at the path that
+  mirrors its source file — see `context/architecture.md` → **Test structure**. Never beside a
+  source file, never inside a module/feature folder. `setup` keeps the suite
+  self-contained: tests run on a clean checkout with no developer `.env`.
 - `flutter_test` for unit (notifiers, repositories, mappers) and widget tests;
   `mocktail` for mocks; `integration_test` for critical e2e flows.
 - New behavior ships with a happy-path test plus at least one edge/error case

@@ -26,16 +26,20 @@ A working test suite for the Flutter app: `flutter_test` + `mocktail` for unit/w
 repositories and `ProviderScope` overrides), plus an `integration_test` e2e flow for the critical
 auth path — wired to the commands recorded in `context/architecture.md`.
 
+## Test layout (HARD)
+
+All tests in this feature follow `context/architecture.md` → **Test structure**: `test/` — `main_test.dart`, `app_test.dart`, `flutter_test_config.dart`, `helpers.dart`, folders mirroring `lib/` (`*_test.dart`); e2e in `integration_test/`. Any path elsewhere in this spec that sits outside that layout (`src/**/tests/`, `src/test/`, a root `tests/` or `e2e/`, `*.test.*`, `conftest.py`) describes the current/legacy suite — it is migrated by this feature, never extended.
+
 ## Scope
 
 ### Unit / widget harness (to add)
 
 - `dev_dependencies`: `flutter_test` (SDK), `mocktail`, and `integration_test` (SDK). Mirror `lib/`
   under `test/`; e2e lives under `integration_test/`.
-- `test/helpers/` — a `pumpWithProviders(...)` helper that wraps a widget under test in a
+- `test/helpers.dart` — a `pumpWithProviders(...)` helper that wraps a widget under test in a
   `ProviderScope` (with overrides) + `MaterialApp` (theme + localization delegates), and a fake
-  `TokenStore` + fake repositories built with `mocktail`. A `registerFallbackValue` setup for
-  custom argument types.
+  `TokenStore` + fake repositories built with `mocktail`. `test/flutter_test_config.dart` (auto-loaded by Flutter) holds the global setup: a
+  `registerFallbackValue` for custom argument types and fake env values.
 - Reset secure storage + auth state between tests via provider overrides (no real
   `flutter_secure_storage` plugin calls in unit/widget tests).
 
@@ -77,15 +81,16 @@ auth path — wired to the commands recorded in `context/architecture.md`.
 
 ## UI / widgets used
 
-- Test utilities under `test/helpers/*` (`pumpWithProviders` wrapping `ProviderScope` + `MaterialApp`
+- Test utilities in `test/helpers.dart` + `test/flutter_test_config.dart` (`pumpWithProviders` wrapping `ProviderScope` + `MaterialApp`
   + localization); `integration_test/*` flows; existing feature screens/widgets as units under test.
 
 ## Acceptance criteria
 
+- [ ] Test layout matches `context/architecture.md` → Test structure: every existing test is moved to its mirrored path and renamed to the stack suffix; nothing test-related remains under the source root; runner config (globs, setup file, e2e dir, coverage root) points at the test folder; the collected-test count is not lower after the move.
 - [ ] `flutter_test` + `mocktail` + `integration_test` added as dev deps; `test/` mirrors `lib/` and
       `integration_test/` exists; `flutter test` and `flutter test integration_test` run (commands
       already recorded in `context/architecture.md`).
-- [ ] `test/helpers/pumpWithProviders` mounts a widget in `ProviderScope` (overrides) + `MaterialApp`
+- [ ] `test/helpers.dart` `pumpWithProviders` mounts a widget in `ProviderScope` (overrides) + `MaterialApp`
       (theme + localization) and resets token + auth state between tests; no real plugin I/O in unit/
       widget tests.
 - [ ] `core/network` envelope parser and `core/storage` `TokenStore` are unit-tested (envelope/

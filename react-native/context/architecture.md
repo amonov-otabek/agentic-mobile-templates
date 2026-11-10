@@ -95,31 +95,38 @@ and render it inside a layout. New top-level folders require developer approval 
 
 ## Test structure (HARD)
 
-Applies to every project built from this template. QA rejects a task whose test files break any rule below.
-
-```
-src/features/auth/validators/sign-in.ts          → test/features/auth/validators/sign-in.spec.ts
-src/features/auth/pages/sign-in-page.tsx         → test/features/auth/pages/sign-in-page.spec.tsx
-src/shared/libs/storage.ts                       → test/shared/libs/storage.spec.ts
-```
+Every project built from this template uses this exact test layout. QA rejects a task whose test files break any rule below.
 
 ```
 test/
-├── helpers.tsx                ← render-with-providers, query client, storage/router mocks
-├── features/<name>/           ← mirrors the feature: api/, queries/, services/, validators/, components/, pages/
+├── main.spec.tsx              ← bootstrap: root _layout + Providers
+├── app.spec.tsx               ← navigation: route groups + auth guards
+├── setup.ts                   ← self-contained test env (runner setup file)
+├── helpers.tsx                ← render-with-providers, fixtures, mocks
+├── features/<name>/           ← mirrors the feature: api/, queries/, services/, …
 ├── layout/                    ← mirrors src/layout
 ├── shared/                    ← mirrors src/shared: components/, hooks/, libs/, i18n/
 └── e2e/                       ← <flow>.e2e-spec.ts
 ```
 
-1. **One location only.** Every test file lives under `test/` — never next to a source file, never inside a module/feature folder, never in a second test folder.
-2. **Mirror the source tree.** `test/` mirrors `src/` one-to-one. Same folder names, same file names, plus the `.spec.ts` / `.spec.tsx` suffix. Never put test files under `src/app/` — Expo Router would treat them as routes.
-3. **One spec per source file**, at its mirrored path. Moving or renaming a source file moves or renames its spec in the same task.
-4. **No catch-all spec.** Logic shared across the app is tested at the mirrored path of the file that owns it — never in a "global" / "misc" / "utils" spec file.
-5. **Shared test code** lives in `test/helpers.tsx` (render-with-providers, query client, secure-storage and router mocks). Specs never import from other specs.
-6. **End-to-end tests** live only in `test/e2e/`, named `<flow>.e2e-spec.ts` (or Maestro flows `<flow>.e2e.yaml` if Maestro is chosen). Unit/integration specs never go there, and e2e specs never go anywhere else.
-7. **Runner config follows the folder.** No test runner is wired yet — when one is added (`jest-expo` + React Native Testing Library), its `roots`/`testMatch` cover only `test/**/*.spec.{ts,tsx}` (excluding `test/e2e/`), coverage measures `src/`, and the commands go into the table above.
-8. **Legacy layout is drift, not precedent.** If existing code or a feature spec places tests elsewhere (e.g. a module's own `tests/` folder), new and modified tests still go to the mirrored path; moving the old ones is its own task — surface the drift to the developer, never silently mass-move files.
+Source → spec mapping:
+
+```
+src/app/_layout.tsx                              → test/main.spec.tsx (root providers)
+src/features/auth/validators/sign-in.ts          → test/features/auth/validators/sign-in.spec.ts
+src/shared/libs/storage.ts                       → test/shared/libs/storage.spec.ts
+```
+
+1. **One location only.** Every test file lives under `test/` at the project root — never next to a source file, never inside a module/feature folder, never in a second test folder.
+2. **Fixed root files — nothing else at the root.** `main.spec.tsx` covers bootstrap only: root `_layout.tsx` mounts the provider stack. `app.spec.tsx` covers navigation only: the entry redirect and `(auth)` / `(protected)` guards. `setup.ts` makes the suite self-contained: RNTL matchers, global mocks (fetch/API client, storage, secure-store, expo-router, i18n), test env values — loaded by the runner as its setup file; no developer `.env` is required. `helpers.tsx` holds render-with-providers (router, query client, i18n, theme), fixtures and mocks — no assertions. Besides these four, the root holds only mirrored folders and `e2e/`.
+3. **Mirror the source tree.** Every other spec sits at the path of the file it tests: same folder names, same file name, plus the `.spec.ts` / `.spec.tsx` suffix (`*.test.*` is not used). Never put a test file under `src/app/` — Expo Router would treat it as a route.
+4. **One spec per source file.** Moving or renaming a source file moves or renames its spec in the same task.
+5. **No catch-all spec.** Logic shared across the app is tested at the mirrored path of the file that owns it — never in a "global" / "misc" / "utils" spec.
+6. **Specs import only source code and the helpers file** — never another spec, never a fixture defined inside another spec.
+7. **End-to-end tests** live only in `test/e2e/`, named `<flow>.e2e-spec.ts` (or Maestro flows `<flow>.e2e.yaml` if Maestro is chosen). Unit/integration specs never go there; the e2e folder may hold one `helpers` file of its own (route/bridge mocks, launch fixtures).
+8. **Runner config follows the folder.** No test runner is wired yet. When one is added (`jest-expo` + React Native Testing Library): `roots: ['<rootDir>/test']`, match `*.spec.{ts,tsx}` excluding `test/e2e/`, `setupFiles: ['<rootDir>/test/setup.ts']`, coverage measures `src/`; then add the commands to the table above. If the config disagrees with this section, fix the config in the same task.
+9. **Same tree in every template.** The root file names (`main`, `app`, `setup`, `helpers`, `e2e/`) are identical across all stacks, so a developer moving between a TS and a Python API finds the same layout. A change to this rule is applied to every template at once.
+10. **Legacy layout is drift, not precedent.** If existing code or a feature spec places tests elsewhere (e.g. a module's own `tests/` folder or `*.test.ts` files), new and modified tests still follow this section; moving the old ones is its own task — surface the drift to the developer, never silently mass-move files.
 
 ## Boundary rules (HARD)
 
