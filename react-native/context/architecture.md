@@ -70,6 +70,7 @@ src/
     ├── i18n/                  ← index, detector, routing, messages/{en,ru,uz}.json
     └── libs/                  ← api (typed client), storage (secure), store (zustand), utils (cn), validators
 
+test/                          ← mirrors src/ (see Test structure)
 app.json                       ← Expo config (plugins, scheme, icons, experiments)
 metro.config.js                ← NativeWind metro (hexColors: oklch → hex at build)
 .env.example                   ← EXPO_PUBLIC_API_URL
@@ -91,6 +92,34 @@ utils/        ← optional helpers
 
 Route screens in `src/app/**` stay thin — they import a feature `pages/*` component
 and render it inside a layout. New top-level folders require developer approval first.
+
+## Test structure (HARD)
+
+Applies to every project built from this template. QA rejects a task whose test files break any rule below.
+
+```
+src/features/auth/validators/sign-in.ts          → test/features/auth/validators/sign-in.spec.ts
+src/features/auth/pages/sign-in-page.tsx         → test/features/auth/pages/sign-in-page.spec.tsx
+src/shared/libs/storage.ts                       → test/shared/libs/storage.spec.ts
+```
+
+```
+test/
+├── helpers.tsx                ← render-with-providers, query client, storage/router mocks
+├── features/<name>/           ← mirrors the feature: api/, queries/, services/, validators/, components/, pages/
+├── layout/                    ← mirrors src/layout
+├── shared/                    ← mirrors src/shared: components/, hooks/, libs/, i18n/
+└── e2e/                       ← <flow>.e2e-spec.ts
+```
+
+1. **One location only.** Every test file lives under `test/` — never next to a source file, never inside a module/feature folder, never in a second test folder.
+2. **Mirror the source tree.** `test/` mirrors `src/` one-to-one. Same folder names, same file names, plus the `.spec.ts` / `.spec.tsx` suffix. Never put test files under `src/app/` — Expo Router would treat them as routes.
+3. **One spec per source file**, at its mirrored path. Moving or renaming a source file moves or renames its spec in the same task.
+4. **No catch-all spec.** Logic shared across the app is tested at the mirrored path of the file that owns it — never in a "global" / "misc" / "utils" spec file.
+5. **Shared test code** lives in `test/helpers.tsx` (render-with-providers, query client, secure-storage and router mocks). Specs never import from other specs.
+6. **End-to-end tests** live only in `test/e2e/`, named `<flow>.e2e-spec.ts` (or Maestro flows `<flow>.e2e.yaml` if Maestro is chosen). Unit/integration specs never go there, and e2e specs never go anywhere else.
+7. **Runner config follows the folder.** No test runner is wired yet — when one is added (`jest-expo` + React Native Testing Library), its `roots`/`testMatch` cover only `test/**/*.spec.{ts,tsx}` (excluding `test/e2e/`), coverage measures `src/`, and the commands go into the table above.
+8. **Legacy layout is drift, not precedent.** If existing code or a feature spec places tests elsewhere (e.g. a module's own `tests/` folder), new and modified tests still go to the mirrored path; moving the old ones is its own task — surface the drift to the developer, never silently mass-move files.
 
 ## Boundary rules (HARD)
 
